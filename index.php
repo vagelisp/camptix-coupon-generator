@@ -1,1 +1,1 @@
-<?php // Silence is golden... but that's not always the case. Reach our for support if you need to.s
+<?php // Silence is golden... but that's not always the case. Reach our for support if you need to.
