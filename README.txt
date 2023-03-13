@@ -14,7 +14,6 @@ CampTix Coupon Generator is a WordPress plugin that streamlines coupon generatio
 
 == Description ==
 
-
 CampTix Coupon Generator is a WordPress plugin that streamlines coupon generation for websites using the CampTix event management plugin. With this plugin, you can quickly generate multiple CampTix coupons by importing a CSV file. It's perfect for event organisers who want to create unique coupons in bulk or provide discounts and special offers to attendees.
 
 The plugin also maintains a log file that records all coupon creation activity, so you can easily review or download the data later. This feature helps you keep track of coupon usage and provides an audit trail of coupon distribution.
@@ -51,6 +50,21 @@ Automatic updates should work like a charm; as always though, ensure you backup 
 4. Click on the Generate Coupons button.
 5. The plugin will create the coupons and log the creation.
 6. View the log file and list the created coupons on the Coupons page.
+
+== Frequently Asked Questions ==
+= How do I import a CSV file? =
+1. Prepare a CSV file with the following columns: code, discount_price, discount_percent, quantity, email. The code and the quantity columns are required, the rest are optional however you should have discount_price or discount_percent. Add an email column if you want to send an email to each coupon recipient.
+2. Import the CSV file on the Coupons Generator page.
+3. Click on the Generate Coupons button.
+4. The plugin will create the coupons and log the creation.
+5. View the log file and list the created coupons on the Coupons page.
+
+= How do I view the log file? =
+The log file is available on the Coupons Generator page. You can view the log file and download it as a CSV file.
+
+= How do I view the coupons? =
+The coupons are available on the Coupons page. You can view the coupons and download them as a CSV file.
+
 
 ### Support
 
