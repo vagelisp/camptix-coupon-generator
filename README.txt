@@ -45,7 +45,7 @@ Automatic updates should work like a charm; as always though, ensure you backup 
 === Plugin Usage ===
 
 1. Install and activate the CampTix Coupon Generator plugin.
-2. Prepare a CSV file with the following columns: code, discount_price, discount_percent, quantity, email. The code and the quantity columns are required, the rest are optional however you should have discount_price or discount_percent. Add an email column if you want to send an email to each coupon recipient.
+2. Prepare a CSV file with the following columns: code, discount_price, discount_percent, quantity, email. The code and the quantity columns are required, the rest are optional however you should have discount_price or discount_percent. Add an email column if you want to send an email to each coupon recipient. A sample CSV file can be found here https://docs.google.com/spreadsheets/d/1cO1lgNECwM1-chhwKH3tYYd1cEjhT-_J33Sk6uC3MaE/edit?usp=sharing
 3. Import the CSV file on the Coupons Generator page.
 4. Click on the Generate Coupons button.
 5. The plugin will create the coupons and log the creation.
