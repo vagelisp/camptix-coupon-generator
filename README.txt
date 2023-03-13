@@ -9,10 +9,11 @@ Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-CampTix Coupon Generator is a WordPress plugin for generating bulk coupons for event management. Import a CSV file to create coupons, log creation activity and send an email for each coupon generated. Ideal for generating unique coupons for event Organisers and Volunteers etc.
+CampTix Coupon Generator is a WordPress plugin that streamlines coupon generation for websites using the CampTix event management plugin. Import a CSV file to create coupons, log creation activity and send an email for each coupon generated. Ideal for generating unique coupons for event Organisers and Volunteers etc.
 
 
 == Description ==
+
 
 CampTix Coupon Generator is a WordPress plugin that streamlines coupon generation for websites using the CampTix event management plugin. With this plugin, you can quickly generate multiple CampTix coupons by importing a CSV file. It's perfect for event organisers who want to create unique coupons in bulk or provide discounts and special offers to attendees.
 
