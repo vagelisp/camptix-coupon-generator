@@ -22,7 +22,7 @@
  * @link       https://vagelis.dev
  * @since      1.0.0
  *
- * @package    Camptix_Coupon_Generator
+ * @package    CampTix_Coupon_Generator
  */
 
 // If uninstall not called from WordPress, then exit.

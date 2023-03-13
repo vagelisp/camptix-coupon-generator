@@ -9,8 +9,8 @@
  * @link       https://vagelis.dev
  * @since      1.0.0
  *
- * @package    Camptix_Coupon_Generator
- * @subpackage Camptix_Coupon_Generator/includes
+ * @package    CampTix_Coupon_Generator
+ * @subpackage CampTix_Coupon_Generator/includes
  */
 
 /**
@@ -20,8 +20,8 @@
  * so that it is ready for translation.
  *
  * @since      1.0.0
- * @package    Camptix_Coupon_Generator
- * @subpackage Camptix_Coupon_Generator/includes
+ * @package    CampTix_Coupon_Generator
+ * @subpackage CampTix_Coupon_Generator/includes
  * @author     Vagelis Papaioannou <hello@vagelis.dev>
  */
 class Camptix_Coupon_Generator_i18n {

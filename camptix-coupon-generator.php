@@ -10,7 +10,7 @@
  *
  * @link              https://vagelis.dev
  * @since             1.0.0
- * @package           Camptix_Coupon_Generator
+ * @package           CampTix_Coupon_Generator
  *
  * @wordpress-plugin
  * Plugin Name:       Camptix Coupon Generator
@@ -80,7 +80,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-camptix-coupon-generator.p
  */
 function run_camptix_coupon_generator() {
 
-	$plugin = new Camptix_Coupon_Generator();
+	$plugin = new CampTix_Coupon_Generator();
 	$plugin->run();
 
 }

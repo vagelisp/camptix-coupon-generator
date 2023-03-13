@@ -8,8 +8,8 @@
  * @link       https://vagelis.dev
  * @since      1.0.0
  *
- * @package    Camptix_Coupon_Generator
- * @subpackage Camptix_Coupon_Generator/public/partials
+ * @package    CampTix_Coupon_Generator
+ * @subpackage CampTix_Coupon_Generator/public/partials
  */
 ?>
 

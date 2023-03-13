@@ -6,8 +6,8 @@
  * @link       https://vagelis.dev
  * @since      1.0.0
  *
- * @package    Camptix_Coupon_Generator
- * @subpackage Camptix_Coupon_Generator/public
+ * @package    CampTix_Coupon_Generator
+ * @subpackage CampTix_Coupon_Generator/public
  */
 
 /**
@@ -16,8 +16,8 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the public-facing stylesheet and JavaScript.
  *
- * @package    Camptix_Coupon_Generator
- * @subpackage Camptix_Coupon_Generator/public
+ * @package    CampTix_Coupon_Generator
+ * @subpackage CampTix_Coupon_Generator/public
  * @author     Vagelis Papaioannou <hello@vagelis.dev>
  */
 class Camptix_Coupon_Generator_Public {

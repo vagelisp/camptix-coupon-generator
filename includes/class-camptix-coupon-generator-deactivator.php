@@ -6,8 +6,8 @@
  * @link       https://vagelis.dev
  * @since      1.0.0
  *
- * @package    Camptix_Coupon_Generator
- * @subpackage Camptix_Coupon_Generator/includes
+ * @package    CampTix_Coupon_Generator
+ * @subpackage CampTix_Coupon_Generator/includes
  */
 
 /**
@@ -16,8 +16,8 @@
  * This class defines all code necessary to run during the plugin's deactivation.
  *
  * @since      1.0.0
- * @package    Camptix_Coupon_Generator
- * @subpackage Camptix_Coupon_Generator/includes
+ * @package    CampTix_Coupon_Generator
+ * @subpackage CampTix_Coupon_Generator/includes
  * @author     Vagelis Papaioannou <hello@vagelis.dev>
  */
 class Camptix_Coupon_Generator_Deactivator {

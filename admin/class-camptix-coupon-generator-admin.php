@@ -6,8 +6,8 @@
  * @link       https://vagelis.dev
  * @since      1.0.0
  *
- * @package    Camptix_Coupon_Generator
- * @subpackage Camptix_Coupon_Generator/admin
+ * @package    CampTix_Coupon_Generator
+ * @subpackage CampTix_Coupon_Generator/admin
  */
 
 /**
@@ -16,8 +16,8 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    Camptix_Coupon_Generator
- * @subpackage Camptix_Coupon_Generator/admin
+ * @package    CampTix_Coupon_Generator
+ * @subpackage CampTix_Coupon_Generator/admin
  * @author     Vagelis Papaioannou <hello@vagelis.dev>
  */
 class Camptix_Coupon_Generator_Admin
