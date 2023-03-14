@@ -6,15 +6,16 @@
     e.preventDefault();
     // And send an AJAX request to the server
     $.ajax({
-      url: "/wp-admin/admin-ajax.php",
+      url: camptix_coupon_generator_log.ajax_url,
       type: "POST",
       data: {
         action: "coupon_log",
+        security: camptix_coupon_generator_log.ajax_nonce,
       },
       // On success, display the log content
       success: function (response) {
         // Display the log content
-		  $("#ccg_log_content").html(response);
+        $("#ccg_log_content").html(response);
       },
       // And on error, display the error message
       error: function (jqXHR, textStatus, errorThrown) {
