@@ -150,7 +150,7 @@ class Camptix_Coupon_Generator_Admin
 						?>
 					</tbody>
 				</table>
-			<?php
+		<?php
 			} else {
 				echo esc_html__('No log data found.', 'camptix-coupon-generator');
 			}
@@ -219,7 +219,7 @@ class Camptix_Coupon_Generator_Admin
 				<p><a id="ccg_log_download" href="<?php echo esc_url('/wp-content/' . LOG_FILE_NAME); ?>" class="button" download><?php echo esc_html__('Download Log', 'camptix-coupon-generator'); ?></a></p>
 			<?php } ?>
 		</div>
-		<?php
+<?php
 
 		// End output buffering and display the content
 		echo ob_get_clean();
@@ -358,7 +358,7 @@ class Camptix_Coupon_Generator_Admin
 		}
 		// Close the log file.
 		fclose($log_file);
-		
+
 		// Close the CSV file.
 		fclose($handle);
 	}
