@@ -38,9 +38,11 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'CAMPTIX_COUPON_GENERATOR_VERSION', '1.0.0' );
 
 /**
- * Log file path
+ * Log file path & path.
  */
 define('LOG_FILE_NAME', 'generated-coupons.txt');
+define('LOG_FILE_PATH', WP_CONTENT_DIR . '/' . LOG_FILE_NAME);
+
 
 /**
  * The code that runs during plugin activation.
