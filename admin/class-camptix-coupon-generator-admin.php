@@ -99,6 +99,11 @@ class Camptix_Coupon_Generator_Admin
 		 */
 
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/camptix-coupon-generator-admin.js', array('jquery'), $this->version, true);
+		wp_localize_script($this->plugin_name, 'camptix_coupon_generator_log', array(
+			'ajax_url' => admin_url('admin-ajax.php'),
+			'log_file_url' => '/wp-content/' . LOG_FILE_NAME,
+			'ajax_nonce' => wp_create_nonce('display_coupon_log_nonce')
+		));
 	}
 
 	/**
@@ -108,44 +113,55 @@ class Camptix_Coupon_Generator_Admin
 	 */
 	public function coupon_log()
 	{
-		$log_file = WP_CONTENT_DIR . '/' . LOG_FILE_NAME;
+		// Check the nonce
+		check_ajax_referer('display_coupon_log_nonce', 'security');
 
-		if (file_exists($log_file)) {
-			$log_content = file_get_contents($log_file);
+		if (file_exists(LOG_FILE_PATH)) {
+			$log_content = file_get_contents(LOG_FILE_PATH);
 			$log_lines = explode(PHP_EOL, $log_content);
+
+			if (!empty($log_lines)) {
 ?>
-			<table>
-				<thead>
-					<tr>
-						<th>Date</th>
-						<th>Coupon Code</th>
-						<th>Status</th>
-						<th>Email Address</th>
-						<th>Email Sent</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach ($log_lines as $line) : ?>
-						<?php if (!empty($line)) : ?>
-							<?php list($date, $code, $status, $email_address, $email_sent) = explode(',', $line); ?>
-							<tr>
-								<td><?php echo $date; ?></td>
-								<td><?php echo $code; ?></td>
-								<td><?php echo $status; ?></td>
-								<td><?php echo $email_address; ?></td>
-								<td><?php echo $email_sent; ?></td>
-							</tr>
-						<?php endif; ?>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
-		<?php
+				<table>
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Coupon Code</th>
+							<th>Status</th>
+							<th>Email Address</th>
+							<th>Email Sent</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						foreach ($log_lines as $line) {
+							if ($line !== '') {
+								list($date, $code, $status, $email_address, $email_sent) = explode(',', $line);
+								printf(
+									'<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>',
+									esc_html($date),
+									esc_html($code),
+									esc_html($status),
+									esc_html($email_address),
+									esc_html($email_sent)
+								);
+							}
+						}
+						?>
+					</tbody>
+				</table>
+			<?php
+			} else {
+				echo esc_html__('No log data found.', 'camptix-coupon-generator');
+			}
 		} else {
-			echo 'Log file not found.' . $log_file;
+			printf(
+				esc_html__('Log file not found: %s', 'camptix-coupon-generator'),
+				LOG_FILE_PATH
+			);
 		}
 		wp_die();
 	}
-
 	/**
 	 * Register the Menu Page.
 	 *
@@ -153,8 +169,16 @@ class Camptix_Coupon_Generator_Admin
 	 */
 	public function add_menu_page()
 	{
-		add_submenu_page('edit.php?post_type=tix_ticket', __('Generate Coupons', 'ccg'), __('Generate Coupons', 'ccg'), 'manage_options', 'camptix-generate-coupons', array($this, 'generate_coupons_page'));
+		add_submenu_page(
+			'edit.php?post_type=tix_ticket',
+			esc_html__('Generate Coupons', 'camptix-coupon-generator'),
+			esc_html__('Generate Coupons', 'camptix-coupon-generator'),
+			'manage_options',
+			'camptix_generate_coupons_page',
+			array($this, 'generate_coupons_page')
+		);
 	}
+
 
 	/**
 	 * Render the Menu Page for Coupon Generation.
@@ -164,37 +188,80 @@ class Camptix_Coupon_Generator_Admin
 	public function generate_coupons_page()
 	{
 
-		// Handle coupon generation if form is submitted
-		if (isset($_POST['generate_coupons'], $_FILES['coupons_file'])) {
-			$this->generate_coupons_from_file($_FILES['coupons_file']['tmp_name']);
-		}
-
-		// Output HTML for the page
+		// Start output buffering
+		ob_start();
 		?>
 		<div class="wrap">
-			<h1>Generate Coupons</h1>
+			<h1><?php echo esc_html__('Generate Coupons', 'camptix-coupon-generator'); ?></h1>
 			<form method="post" enctype="multipart/form-data">
-				<p>
-					<label for="coupons_file">CSV File:</label>
-					<input type="file" name="coupons_file" id="coupons_file">
-				</p>
-				<p>
-					<input type="submit" name="generate_coupons" value="Generate Coupons" class="button button-primary">
-				</p>
+				<?php wp_nonce_field('generate_coupons', 'generate_coupons_nonce'); ?>
+				<table class="form-table">
+					<tr>
+						<th scope="row">
+							<label for="coupons_file"><?php echo esc_html__('CSV File:', 'camptix-coupon-generator'); ?></label>
+						</th>
+						<td>
+							<input type="file" name="coupons_file" id="coupons_file" required>
+						</td>
+					</tr>
+				</table>
+				<?php submit_button(esc_html__('Generate Coupons', 'camptix-coupon-generator')); ?>
 			</form>
-			<?php if (file_exists(WP_CONTENT_DIR . '/' . LOG_FILE_NAME)) { ?>
+			<?php if (file_exists(LOG_FILE_PATH)) { ?>
 				<?php
-				$last_time = filemtime(WP_CONTENT_DIR . '/' . LOG_FILE_NAME);
-				echo 'Last run was on ' . date('F d, Y H:i A', $last_time);
+				$last_time = filemtime(LOG_FILE_PATH);
+				echo esc_html__('Last run was on', 'camptix-coupon-generator') . ' ' . date('F d, Y H:i A', $last_time);
 				?>
 				<p>
-					<a id="ccg_log_display" href="#" class="button">View Log</a>
+					<a id="ccg_log_display" href="#" class="button"><?php echo esc_html__('View Log', 'camptix-coupon-generator'); ?></a>
 				</p>
 				<p id="ccg_log_content"></p>
-				<p><a id="ccg_log_download" href="<?php echo '/wp-content/' . LOG_FILE_NAME ?>" class="button" donwload>Download Log</a></p>
+				<p><a id="ccg_log_download" href="<?php echo esc_url('/wp-content/' . LOG_FILE_NAME); ?>" class="button" download><?php echo esc_html__('Download Log', 'camptix-coupon-generator'); ?></a></p>
 			<?php } ?>
 		</div>
-<?php
+		<?php
+
+		// End output buffering and display the content
+		echo ob_get_clean();
+
+		// Handle coupon generation if form is submitted
+		$message = $this->handle_form_submission();
+
+		// Display message if not empty
+		if (!empty($message)) {
+			echo '<div"><p>' . $message . '</p></div>';
+		}
+	}
+
+	/**
+	 * Handles form submission.
+	 *
+	 * @since    1.0.0
+	 */
+	private function handle_form_submission()
+	{
+		$message = '';
+		// $this->display_error_message('The submitted file is not a CSV. Please upload a valid CSV file.');
+		if (isset($_FILES['coupons_file'])) {
+			// Check user capabilities
+			if (!current_user_can('manage_options')) {
+				wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'camptix-coupon-generator'));
+			}
+
+			// Check nonce
+			check_admin_referer('generate_coupons', 'generate_coupons_nonce');
+
+			// Validate and sanitize file input
+			$file = $_FILES['coupons_file'];
+			if ($file['type'] !== 'text/csv') {
+				wp_die(esc_html__('Invalid file type. Please upload a CSV file.', 'camptix-coupon-generator'));
+			}
+
+			// Process the file
+			$this->generate_coupons_from_file($file['tmp_name']);
+			$message = esc_html__('Coupons have been generated successfully.', 'camptix-coupon-generator');
+		}
+		return $message;
 	}
 
 	/**
@@ -207,13 +274,13 @@ class Camptix_Coupon_Generator_Admin
 	{
 		// Check that the file exists.
 		if (!file_exists($file)) {
-			wp_die('File not found.');
+			wp_die(esc_html__('File not found.', 'camptix-coupon-generator'));
 		}
 
 		// Open the file.
 		$handle = fopen($file, 'r');
 		if (!$handle) {
-			wp_die('Error opening file.');
+			wp_die(esc_html__('Error opening file.', 'camptix-coupon-generator'));
 		}
 
 		// Read the header row and get the column names.
@@ -224,22 +291,21 @@ class Camptix_Coupon_Generator_Admin
 		$required_columns = array('code', 'quantity');
 		foreach ($required_columns as $required_column) {
 			if (!isset($columns[$required_column])) {
-				wp_die("Missing required column: $required_column");
+				wp_die(sprintf(esc_html__('Missing required column: %s', 'camptix-coupon-generator'), $required_column));
 			}
 		}
 
 		// Create/Wipe the log file
-		$log_file = WP_CONTENT_DIR . '/' . LOG_FILE_NAME;
-		fopen($log_file, 'w');
+		$log_file = fopen(LOG_FILE_PATH, 'w');
 
 		// Generate coupons from data rows.
 		while ($row = fgetcsv($handle)) {
 			// Get coupon data from the row.
 			$code = $row[$columns['code']];
-			$discount_price = $row[$columns['discount_price']] ?? null;
-			$percent = $row[$columns['discount_percent']] ?? null;
+			$discount_price = isset($row[$columns['discount_price']]) ? $row[$columns['discount_price']] : null;
+			$percent = isset($row[$columns['discount_percent']]) ? $row[$columns['discount_percent']] : null;
 			$quantity = $row[$columns['quantity']];
-			$email = $row[$columns['email']];
+			$recipient = isset($row[$columns['email']]) ? $row[$columns['email']] : null;
 
 			// Check if the coupon already exists.
 			$existing_coupon = get_posts(array(
@@ -258,29 +324,42 @@ class Camptix_Coupon_Generator_Admin
 				));
 
 				// Set coupon meta.
-				update_post_meta($coupon_id, 'tix_code', $code);
-				if ($discount_price) update_post_meta($coupon_id, 'tix_discount_price', $discount_price);
-				if ($percent) update_post_meta($coupon_id, 'tix_discount_percent', $percent);
-				update_post_meta($coupon_id, 'tix_coupon_quantity', $quantity);
+				// Prepare an array with the meta keys and their respective values.
+				$meta_data = array(
+					'tix_code' => $code,
+					'tix_discount_price' => $discount_price,
+					'tix_discount_percent' => $percent,
+					'tix_coupon_quantity' => $quantity
+				);
+
+				// Loop through the meta_data array, setting each key and value.
+				foreach ($meta_data as $key => $value) {
+					// Check if the value is not null before updating the post meta.
+					if ($value) {
+						update_post_meta($coupon_id, $key, $value);
+					}
+				}
 
 				// Send out email.
-				if ($row[$columns['email']]) {
-					$subject = 'Coupon generated';
-					$message = "Coupon code: $code\nDiscount price: $discount_price\nDiscount percent: $percent\nQuantity: $quantity";
+				if ($recipient) {
+					$subject = esc_html__('Coupon generated', 'camptix-coupon-generator');
+					$message = wp_sprintf(esc_html__("Coupon code: %s\nDiscount price: %s\nDiscount percent: %s\nQuantity: %s", 'camptix-coupon-generator'), $code, $discount_price, $percent, $quantity);
 					$headers = array('Content-Type: text/html; charset=UTF-8');
-					$email_sent = wp_mail($email, $subject, $message, $headers);
+					$email_sent = wp_mail($recipient, $subject, $message, $headers);
 				} else {
 					$email_sent = false;
 				}
 				// Log successful coupon creation.
-				$this->log_coupon_creation($code, true, $email, $email_sent);
+				$this->log_coupon_creation($code, true, $recipient, $email_sent);
 			} else {
 				// Log failed/skipped coupon creation.
-				$this->log_coupon_creation($code, false, $email, false);
+				$this->log_coupon_creation($code, false, $recipient, false);
 			}
 		}
-
-		// Close the file.
+		// Close the log file.
+		fclose($log_file);
+		
+		// Close the CSV file.
 		fclose($handle);
 	}
 
@@ -294,11 +373,17 @@ class Camptix_Coupon_Generator_Admin
 	 */
 	public function log_coupon_creation($code, $created, $email_address, $email_sent)
 	{
-		// Get the log file path.
-		$log_file = WP_CONTENT_DIR . '/' . LOG_FILE_NAME;
-		// Log the coupon creation.
-		$log_data = date('F d Y H:i A') . "," . $code . "," . ($created ? "created" : "already exists") . "," . $email_address . "," . ($email_sent ? "sent" : "not sent") . "\n";
+		// Create the log entry.
+		$log_data = sprintf(
+			'%s,%s,%s,%s,%s' . PHP_EOL,
+			date('F d Y H:i A'),
+			$code,
+			($created ? 'created' : 'already exists'),
+			$email_address,
+			($email_sent ? 'sent' : 'not sent')
+		);
+
 		// Write the log data to the log file.
-		file_put_contents($log_file, $log_data, FILE_APPEND);
+		file_put_contents(LOG_FILE_PATH, $log_data, FILE_APPEND);
 	}
 }
