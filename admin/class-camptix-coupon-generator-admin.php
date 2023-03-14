@@ -236,7 +236,7 @@ class Camptix_Coupon_Generator_Admin
 	/**
 	 * Handles form submission.
 	 *
-	 * @since    1.0.0
+	 * @since    1.0.5
 	 */
 	private function handle_form_submission()
 	{
