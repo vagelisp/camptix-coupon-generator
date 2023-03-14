@@ -70,7 +70,7 @@ class CampTix_Coupon_Generator {
 		if ( defined( 'CAMPTIX_COUPON_GENERATOR_VERSION' ) ) {
 			$this->version = CAMPTIX_COUPON_GENERATOR_VERSION;
 		} else {
-			$this->version = '1.0.5';
+			$this->version = '1.0.0';
 		}
 		$this->plugin_name = 'camptix-coupon-generator';
 
